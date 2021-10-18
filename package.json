@@ -9,9 +9,12 @@
   "author": "Néstor Valdez",
   "license": "ISC",
   "dependencies": {
-    "mongoose": "~3.6.11",
-    "express": "^4.7.1",
+    "body-parser": "^1.5.1",
+    "express": "^4.17.1",
+    "fs": "0.0.1-security",
     "method-override": "^2.1.2",
-    "body-parser": "^1.5.1"
+    "mongoose": "~3.6.11",
+    "serialport": "^9.2.4",
+    "socket.io": "^4.3.0"
   }
 }
