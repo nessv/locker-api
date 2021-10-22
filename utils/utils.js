@@ -13,4 +13,13 @@ module.exports = {
     }
     return hex.join("");
   },
+
+  byteToBitArray: function (byte) {
+    var bits = [];
+    for (var i = 7; i >= 0; i--) {
+      var bit = byte & (1 << i) ? "closed" : "open";
+      bits.push(bit);
+    }
+    return bits;
+  },
 };

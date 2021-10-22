@@ -1,49 +1,95 @@
 const SerialPort = require("serialport");
-const Readline = require("@serialport/parser-readline");
+const Delimiter = require("@serialport/parser-delimiter");
 const { lockerCode } = require("../utils/mapping");
 
 var formatUtils = require("../utils/utils");
+const { byteToBitArray } = require("../utils/utils");
 
-const port = new SerialPort("/dev/cu.usbserial-A50285BI", {
-  baudRate: 19200,
-  parity: "even",
-  stopBits: 1,
-  dataBits: 8,
-  parser: new Readline({ delimiter: "\n" }),
-});
+var port;
+var parser;
 
-port.on("open", function () {
-  console.log("Conexión establecida con el puerto");
+SerialPort.list().then((ports) => {
+  let serports = [];
+  ports.forEach(function (port) {
+    if (typeof port["manufacturer"] != "undefined") {
+      serports.push(port.path);
+    }
+  });
+
+  port = new SerialPort(serports[0], {
+    baudRate: 19200,
+    parity: "even",
+    stopBits: 1,
+    dataBits: 8,
+  });
+
+  parser = port.pipe(new Delimiter({ delimiter: [0x55] }));
+
+  port.on("open", function () {
+    console.log("Conexión establecida con el puerto");
+  });
 });
 
 //GET - Return status of all lockers
 exports.getLockerStatus = function (req, res) {
   console.log("GET /lockerStatus");
-  sendSync(port, formatUtils.hexToBytes("AAEB230100B955")).then((data) => {
-    console.log(data.toString("hex"));
-    res.status(200).jsonp(formatUtils.bytesToHex(data));
+  sendSync(formatUtils.hexToBytes("AAEB230100B955")).then((data) => {
+    console.log(data);
+    res.status(200).jsonp(processOutput(data));
+  });
+};
+
+//GET - Return status of locker by id
+exports.getLockerStatusById = function (req, res) {
+  console.log("GET /lockerStatusById");
+  sendSync(formatUtils.hexToBytes("AAEB230100B955")).then((data) => {
+    let result = processOutput(data);
+    res.status(200).jsonp(result.lockers[req.params.id - 1]);
   });
 };
 
 //POST - Trigger locker
 exports.postTriggerLocker = function (req, res) {
   console.log("POST /triggerLocker");
-  sendSync(port, formatUtils.hexToBytes(lockerCode[req.query.id])).then(
-    (data) => {
-      res.status(200).jsonp(formatUtils.bytesToHex(data));
-    }
-  );
+  sendSync(formatUtils.hexToBytes(lockerCode[req.query.id])).then((data) => {
+    res.status(200).jsonp(formatUtils.bytesToHex(data));
+  });
 };
 
-function sendSync(port, src) {
+function sendSync(src) {
   return new Promise((resolve, reject) => {
     port.write(src);
-    port.once("data", function (data) {
+    parser.once("data", function (data) {
       resolve(data);
     });
 
-    port.once("error", function (err) {
+    parser.once("error", function (err) {
       reject(err);
     });
   });
+}
+
+function processOutput(data) {
+  var resultBitArray = [];
+
+  for (let i = 5; i < 8; i++) {
+    resultBitArray.push(byteToBitArray(data[i]).reverse());
+  }
+
+  var singleArrayResult = [].concat.apply([], resultBitArray);
+  let resultArray = [];
+
+  for (let i = 0; i < 20; i++) {
+    if (singleArrayResult[i] !== undefined) {
+      let arrayElement = {
+        id: i + 1,
+        state: singleArrayResult[i],
+      };
+
+      resultArray.push(arrayElement);
+    }
+  }
+  return {
+    lockers: resultArray,
+  };
 }
