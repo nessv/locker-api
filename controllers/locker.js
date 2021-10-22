@@ -33,7 +33,7 @@ SerialPort.list().then((ports) => {
 //GET - Return status of all lockers
 exports.getLockerStatus = function (req, res) {
   console.log("GET /lockerStatus");
-  sendSync(formatUtils.hexToBytes("AAEB230100B955")).then((data) => {
+  sendSync(formatUtils.hexToBytes(lockerCode["status"])).then((data) => {
     console.log(data);
     res.status(200).jsonp(processOutput(data));
   });
@@ -42,7 +42,7 @@ exports.getLockerStatus = function (req, res) {
 //GET - Return status of locker by id
 exports.getLockerStatusById = function (req, res) {
   console.log("GET /lockerStatusById");
-  sendSync(formatUtils.hexToBytes("AAEB230100B955")).then((data) => {
+  sendSync(formatUtils.hexToBytes(lockerCode["status"])).then((data) => {
     let result = processOutput(data);
     res.status(200).jsonp(result.lockers[req.params.id - 1]);
   });
@@ -52,7 +52,7 @@ exports.getLockerStatusById = function (req, res) {
 exports.postTriggerLocker = function (req, res) {
   console.log("POST /triggerLocker");
   sendSync(formatUtils.hexToBytes(lockerCode[req.query.id])).then((data) => {
-    res.status(200).jsonp(formatUtils.bytesToHex(data));
+    res.sendStatus(200);
   });
 };
 

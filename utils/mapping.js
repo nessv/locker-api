@@ -20,5 +20,6 @@ lockerCode[17] = "AAEB22020010C955";
 lockerCode[18] = "AAEB22020011CA55";
 lockerCode[19] = "AAEB22020012CB55";
 lockerCode[20] = "AAEB22020013CC55";
+lockerCode["status"] = "AAEB230100B955";
 
 exports.lockerCode = lockerCode;
