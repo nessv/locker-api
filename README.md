@@ -1,4 +1,8 @@
 # locker-api
+
+# Puerto
+
+El proyecto se levanta en `localhost:3000`
 # Métodos
 
 ## Estado de los lockers
