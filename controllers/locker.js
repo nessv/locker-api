@@ -16,7 +16,7 @@ SerialPort.list().then((ports) => {
     }
   });
 
-  port = new SerialPort(serports[0], {
+  port = new SerialPort(serports[1], {
     baudRate: 19200,
     parity: "even",
     stopBits: 1,
@@ -26,7 +26,7 @@ SerialPort.list().then((ports) => {
   parser = port.pipe(new Delimiter({ delimiter: [0x55] }));
 
   port.on("open", function () {
-    console.log("Conexión establecida con el puerto");
+    console.log("Conexión establecida con el puerto: ", serports[1]);
   });
 });
 
