@@ -56,6 +56,14 @@ exports.postTriggerLocker = function (req, res) {
   });
 };
 
+//POST - Trigger locker Hex
+exports.postTriggerLockerHex = function (req, res) {
+  console.log("POST /triggerLockerHex");
+  sendSync(formatUtils.hexToBytes(req.query.hex)).then((data) => {
+    res.sendStatus(200);
+  });
+};
+
 function sendSync(src) {
   return new Promise((resolve, reject) => {
     port.write(src);
