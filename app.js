@@ -25,6 +25,6 @@ app.listen(3000, function () {
 locker.route("/status").get(LockerCtrl.getLockerStatus);
 locker.route("/status/:id").get(LockerCtrl.getLockerStatusById);
 locker.route("/open").post(LockerCtrl.postTriggerLocker);
-locker.route("/open/hex/:hex").post(LockerCtrl.postTriggerLockerHex);
+locker.route("/open/hex").post(LockerCtrl.postTriggerLockerHex);
 
 app.use("", locker);
