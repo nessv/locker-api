@@ -22,8 +22,8 @@ app.listen(3000, function () {
   console.log("Node server running on http://localhost:3000");
 });
 
-locker.route("/status").get(LockerCtrl.getLockerStatus);
-locker.route("/status/:id").get(LockerCtrl.getLockerStatusById);
+locker.route("/status/:group").get(LockerCtrl.getLockerStatus);
+locker.route("/status/:group/:id").get(LockerCtrl.getLockerStatusById);
 locker.route("/open").post(LockerCtrl.postTriggerLocker);
 locker.route("/open/hex").post(LockerCtrl.postTriggerLockerHex);
 

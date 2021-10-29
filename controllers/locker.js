@@ -1,9 +1,13 @@
 const SerialPort = require("serialport");
 const Delimiter = require("@serialport/parser-delimiter");
-const { lockerCode } = require("../utils/mapping");
+// const { lockerCode } = require("../utils/mapping");
 
 var formatUtils = require("../utils/utils");
 const { byteToBitArray } = require("../utils/utils");
+const {
+  getHexForGroupStatus,
+  getHexForLockerOpening,
+} = require("../utils/mapping");
 
 var port;
 var parser;
@@ -30,28 +34,36 @@ SerialPort.list().then((ports) => {
   });
 });
 
-//GET - Return status of all lockers
+//GET - Return status of all lockers in a certain group
 exports.getLockerStatus = function (req, res) {
   console.log("GET /lockerStatus");
-  sendSync(formatUtils.hexToBytes(lockerCode["status"])).then((data) => {
-    console.log(data);
-    res.status(200).jsonp(processOutput(data));
-  });
+  sendSync(formatUtils.hexToBytes(getHexForGroupStatus(req.params.group))).then(
+    (data) => {
+      console.log(data);
+      res.status(200).jsonp(processOutput(data));
+    }
+  );
 };
 
 //GET - Return status of locker by id
 exports.getLockerStatusById = function (req, res) {
   console.log("GET /lockerStatusById");
-  sendSync(formatUtils.hexToBytes(lockerCode["status"])).then((data) => {
-    let result = processOutput(data);
-    res.status(200).jsonp(result.lockers[req.params.id - 1]);
-  });
+  sendSync(formatUtils.hexToBytes(getHexForGroupStatus(req.params.group))).then(
+    (data) => {
+      let result = processOutput(data);
+      res.status(200).jsonp(result.lockers[req.params.id]);
+    }
+  );
 };
 
 //POST - Trigger locker
 exports.postTriggerLocker = function (req, res) {
   console.log("POST /triggerLocker");
-  sendSync(formatUtils.hexToBytes(lockerCode[req.query.id])).then((data) => {
+  sendSync(
+    formatUtils.hexToBytes(
+      getHexForLockerOpening(req.query.group, req.query.id)
+    )
+  ).then((data) => {
     res.sendStatus(200);
   });
 };
