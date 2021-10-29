@@ -112,7 +112,7 @@ function processOutput(data) {
   for (let i = 0; i < 20; i++) {
     if (singleArrayResult[i] !== undefined) {
       let arrayElement = {
-        id: i + 1,
+        id: i,
         state: singleArrayResult[i],
       };
 
