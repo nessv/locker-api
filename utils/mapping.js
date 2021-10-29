@@ -23,5 +23,3 @@ module.exports = {
     return hex + idNumber + checkSum + "55";
   },
 };
-
-// exports.lockerCode = lockerCode;

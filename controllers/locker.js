@@ -1,6 +1,5 @@
 const SerialPort = require("serialport");
 const Delimiter = require("@serialport/parser-delimiter");
-// const { lockerCode } = require("../utils/mapping");
 
 var formatUtils = require("../utils/utils");
 const { byteToBitArray } = require("../utils/utils");
@@ -37,33 +36,43 @@ SerialPort.list().then((ports) => {
 //GET - Return status of all lockers in a certain group
 exports.getLockerStatus = function (req, res) {
   console.log("GET /lockerStatus");
-  sendSync(formatUtils.hexToBytes(getHexForGroupStatus(req.params.group))).then(
-    (data) => {
-      console.log(data);
-      res.status(200).jsonp(processOutput(data));
-    }
-  );
+  console.log("Se recibió pedido de status para el grupo %d", req.params.group);
+  var hexValue = getHexForGroupStatus(req.params.group);
+  console.log("Valor en Hexadecimal: ", hexValue);
+
+  sendSync(formatUtils.hexToBytes(hexValue)).then((data) => {
+    console.log(data);
+    res.status(200).jsonp(processOutput(data));
+  });
 };
 
 //GET - Return status of locker by id
 exports.getLockerStatusById = function (req, res) {
   console.log("GET /lockerStatusById");
-  sendSync(formatUtils.hexToBytes(getHexForGroupStatus(req.params.group))).then(
-    (data) => {
-      let result = processOutput(data);
-      res.status(200).jsonp(result.lockers[req.params.id]);
-    }
+  console.log(
+    "Se recibió pedido de status para el grupo %d, locker %d",
+    req.params.group,
+    req.params.id
   );
+  var hexValue = getHexForGroupStatus(req.params.group);
+  console.log("Valor en Hexadecimal: ", hexValue);
+  sendSync(formatUtils.hexToBytes(hexValue)).then((data) => {
+    let result = processOutput(data);
+    res.status(200).jsonp(result.lockers[req.params.id]);
+  });
 };
 
 //POST - Trigger locker
 exports.postTriggerLocker = function (req, res) {
   console.log("POST /triggerLocker");
-  sendSync(
-    formatUtils.hexToBytes(
-      getHexForLockerOpening(req.query.group, req.query.id)
-    )
-  ).then((data) => {
+  console.log(
+    "Se recibió pedido de apertura para el grupo %d, locker %d",
+    req.query.group,
+    req.query.id
+  );
+  var hexValue = getHexForLockerOpening(req.query.group, req.query.id);
+  console.log("Valor en Hexadecimal: ", hexValue);
+  sendSync(formatUtils.hexToBytes(hexValue)).then((data) => {
     res.sendStatus(200);
   });
 };
@@ -71,6 +80,7 @@ exports.postTriggerLocker = function (req, res) {
 //POST - Trigger locker Hex
 exports.postTriggerLockerHex = function (req, res) {
   console.log("POST /triggerLockerHex");
+  console.log("Se recibió comando Hexadecimal: ", req.query.hex);
   sendSync(formatUtils.hexToBytes(req.query.hex)).then((data) => {
     res.sendStatus(200);
   });
