@@ -23,7 +23,7 @@ module.exports = {
     return bits;
   },
 
-  decimalToHex(d, padding) {
+  decimalToHex: function (d, padding) {
     var hex = Number(d).toString(16);
     padding =
       typeof padding === "undefined" || padding === null

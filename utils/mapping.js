@@ -8,7 +8,8 @@ module.exports = {
     //bin number
     var binNumber = decimalToHex(locker);
     //check sum
-    var checkSum = decimalToHex(185 + group + locker);
+    var checkSumValue = 185 + parseInt(group) + parseInt(locker);
+    var checkSum = decimalToHex(checkSumValue);
 
     return hex + idNumber + binNumber + checkSum + "55";
   },
@@ -18,7 +19,7 @@ module.exports = {
     //id number
     var idNumber = decimalToHex(group);
     //check sum
-    var checkSum = decimalToHex(185 + group);
+    var checkSum = decimalToHex(185 + parseInt(group));
 
     return hex + idNumber + checkSum + "55";
   },
